@@ -46,7 +46,7 @@ static ASN1_INTEGER *pki_crl_number (const X509_CRL *o)
 	return X509_CRL_get_ext_d2i (o, NID_crl_number, NULL, NULL);
 }
 
-int pki_save_crl (const X509 *cert, const char *root, const X509_CRL *crl)
+int pki_save_crl (const X509 *ca, const char *root, const X509_CRL *crl)
 {
 	ASN1_INTEGER *new_n, *cur_n;
 	X509_CRL *cur;
@@ -56,7 +56,7 @@ int pki_save_crl (const X509 *cert, const char *root, const X509_CRL *crl)
 	if ((new_n = pki_crl_number (crl)) == NULL)
 		return 0;
 
-	if ((cur = pki_load_crl (cert, root, &path)) != NULL) {
+	if ((cur = pki_load_crl (ca, root, &path)) != NULL) {
 		if ((cur_n = pki_crl_number (cur)) == NULL)
 			ok = 0;
 		else {

@@ -52,7 +52,7 @@ static char *pki_crl_path (const char *root, unsigned long hash)
 	return NULL;
 }
 
-X509_CRL *pki_load_crl (const X509 *cert, const char *root, char **path)
+X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 {
 	EVP_PKEY *pkey;
 	unsigned long hash;
@@ -62,13 +62,13 @@ X509_CRL *pki_load_crl (const X509 *cert, const char *root, char **path)
 	size_t i;
 	X509_CRL *ret = NULL, *crl;
 
-	if ((pkey = X509_get0_pubkey (cert)) == NULL)
+	if ((pkey = X509_get0_pubkey (ca)) == NULL)
 		return NULL;
 
 	if (root == NULL)
 		root = "/etc/ssl/certs";
 
-	hash = X509_NAME_hash (X509_get_subject_name (cert));
+	hash = X509_NAME_hash (X509_get_subject_name (ca));
 
 	len = snprintf (NULL, 0, "%s/%08lx.r*", root, hash) + 1;
 
