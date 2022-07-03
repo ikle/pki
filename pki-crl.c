@@ -151,16 +151,17 @@ int pki_save_crl (const X509 *cert, const char *root, const X509_CRL *crl)
 	ASN1_INTEGER *cur_n, *new_n;
 	int ok = 1, update = 0;
 
+	if ((new_n = pki_crl_number (crl)) == NULL)
+		return 0;
+
 	if ((cur = pki_load_crl (cert, root, &path)) != NULL) {
 		cur_n = pki_crl_number (cur);
-		new_n = pki_crl_number (crl);
 
-		if (cur_n == NULL || new_n == NULL)
+		if (cur_n == NULL)
 			ok = 0;
 		else
 			update = ASN1_INTEGER_cmp (cur_n, new_n) < 0;
 
-		ASN1_INTEGER_free (new_n);
 		ASN1_INTEGER_free (cur_n);
 		X509_CRL_free (cur);
 	}
@@ -175,5 +176,6 @@ int pki_save_crl (const X509 *cert, const char *root, const X509_CRL *crl)
 		ok &= pki_write_crl (crl, path);
 
 	free (path);
+	ASN1_INTEGER_free (new_n);
 	return ok;
 }
