@@ -13,7 +13,8 @@
 
 #include <openssl/asn1.h>
 #include <openssl/pem.h>
-#include <openssl/x509.h>
+
+#include "pki-crl.h"
 
 X509_CRL *pki_read_crl (const char *path)
 {
