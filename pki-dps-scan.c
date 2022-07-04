@@ -1,5 +1,5 @@
 /*
- * PKI CRL Update helpers
+ * PKI CRL DP Scan helpers
  *
  * Copyright (c) 2016-2022 Alexei A. Smekalkine <ikle@ikle.ru>
  *
