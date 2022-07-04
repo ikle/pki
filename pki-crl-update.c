@@ -8,7 +8,7 @@
 
 #include <openssl/x509v3.h>
 
-#include "pki-crl.h"
+#include "pki.h"
 
 int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 {

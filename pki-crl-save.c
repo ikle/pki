@@ -11,7 +11,7 @@
 #include <openssl/asn1.h>
 #include <openssl/pem.h>
 
-#include "pki-crl.h"
+#include "pki.h"
 
 int pki_write_crl (const X509_CRL *crl, const char *path)
 {

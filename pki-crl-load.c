@@ -13,7 +13,7 @@
 
 #include <openssl/pem.h>
 
-#include "pki-crl.h"
+#include "pki.h"
 
 X509_CRL *pki_read_crl (const char *path)
 {
