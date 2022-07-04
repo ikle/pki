@@ -23,8 +23,14 @@ static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 	return 0;
 }
 
+static int ca_cb (const X509 *ca, void *cookie)
+{
+	pki_scan_dps (ca, dp_cb, NULL);
+	return 0;
+}
+
 int main (int argc, char *argv[])
 {
-	pki_scan_dps (NULL, NULL, dp_cb, NULL);
+	pki_scan_cas (NULL, ca_cb, NULL);
 	return 0;
 }

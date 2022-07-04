@@ -23,6 +23,6 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path);
 int pki_save_crl (const X509 *ca, const char *root, const X509_CRL *crl);
 
 typedef int pki_dp_cb (const X509 *ca, const char *uri, void *cookie);
-int pki_scan_dps (const X509 *ca, const char *root, pki_dp_cb cb, void *cookie);
+int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie);
 
 #endif  /* PKI_H */
