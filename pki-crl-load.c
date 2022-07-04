@@ -23,7 +23,10 @@ X509_CRL *pki_read_crl (const char *path)
 	if ((f = fopen (path, "rb")) == NULL)
 		return NULL;
 
-	crl = PEM_read_X509_CRL (f, NULL, NULL, NULL);
+	if ((crl = PEM_read_X509_CRL (f, NULL, NULL, NULL)) == NULL) {
+		rewind (f);
+		crl = d2i_X509_CRL_fp (f, NULL);
+	}
 
 	fclose (f);
 	return crl;
