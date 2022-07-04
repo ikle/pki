@@ -39,7 +39,7 @@ static int pki_scan_ca_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 			gn = sk_GENERAL_NAME_value (fullname, j);
 
 			if (gn->type == GEN_URI &&
-			    !cb (ca, (void *) gn->d.ia5->data, cookie))
+			    cb (ca, (void *) gn->d.ia5->data, cookie))
 				break;
 		}
 	}
