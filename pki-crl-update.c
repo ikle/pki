@@ -6,11 +6,15 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <stdio.h>
+
+#include <glob.h>
+
 #include <openssl/x509v3.h>
 
 #include "pki.h"
 
-int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
+static int pki_scan_ca_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 {
 	STACK_OF (DIST_POINT) *dps;
 	int i, dp_count, j, gn_count;
@@ -42,4 +46,48 @@ int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 
 	CRL_DIST_POINTS_free (dps);
 	return 1;
+}
+
+int pki_scan_dps (const X509 *ca, const char *root, pki_dp_cb cb, void *cookie)
+{
+	int len;
+	char *pattern;
+	glob_t g;
+	size_t i;
+	X509 *c;
+
+	if (ca != NULL)
+		return pki_scan_ca_dps (ca, cb, cookie);
+
+	if (root == NULL)
+		root = "/etc/ssl/certs";
+
+	len = snprintf (NULL, 0, "%s/*.pem", root) + 1;
+
+	if ((pattern = malloc (len)) == NULL)
+		return 0;
+
+	snprintf (pattern, len, "%s/*.pem", root);
+
+	g.gl_offs = 0;
+
+	if (glob (pattern, GLOB_NOSORT, NULL, &g) != 0)
+		goto no_glob;
+
+	for (i = 0; i < g.gl_pathc; ++i) {
+		if ((c = pki_read_crt (g.gl_pathv[i])) == NULL)
+			continue;
+
+		if (X509_check_ca (c) != 0)
+			pki_scan_ca_dps (c, cb, cookie);
+
+		X509_free (c);
+	}
+
+	globfree (&g);
+	free (pattern);
+	return 1;
+no_glob:
+	free (pattern);
+	return 0;
 }
