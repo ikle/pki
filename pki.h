@@ -13,6 +13,9 @@
 
 X509 *pki_read_crt (const char *path);
 
+typedef int pki_ca_cb (const X509 *ca, void *cookie);
+int pki_scan_cas (const char *root, pki_ca_cb cb, void *cookie);
+
 X509_CRL *pki_read_crl (const char *path);
 int pki_write_crl (const X509_CRL *crl, const char *path);
 
