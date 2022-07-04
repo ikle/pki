@@ -11,6 +11,8 @@
 
 #include <openssl/x509.h>
 
+X509 *pki_read_crt (const char *path);
+
 X509_CRL *pki_read_crl (const char *path);
 int pki_write_crl (const X509_CRL *crl, const char *path);
 
