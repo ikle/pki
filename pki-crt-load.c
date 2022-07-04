@@ -20,7 +20,10 @@ X509 *pki_read_crt (const char *path)
 	if ((f = fopen (path, "rb")) == NULL)
 		return NULL;
 
-	crt = PEM_read_X509 (f, NULL, NULL, NULL);
+	if ((crt = PEM_read_X509 (f, NULL, NULL, NULL)) == NULL) {
+		rewind (f);
+		crt = d2i_X509_fp (f, NULL);
+	}
 
 	fclose (f);
 	return crt;
