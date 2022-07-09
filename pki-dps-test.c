@@ -9,17 +9,35 @@
 #include <stdio.h>
 
 #include "pki.h"
+#include "pki-fetch.h"
+
+static void show_crl (const X509_CRL *crl)
+{
+	X509_NAME *name = X509_CRL_get_issuer (crl);
+
+	printf ("\tCRL issuer: ");
+	X509_NAME_print_ex_fp (stdout, name, 0, XN_FLAG_RFC2253);
+	printf ("\n");
+}
 
 static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 {
 	char *name = X509_NAME_oneline (X509_get_subject_name (ca), NULL, 0);
+	X509_CRL *crl;
 
 	if (name == NULL)
 		return 0;
 
 	printf ("%s:\n\t%s\n", name, uri);
-
 	OPENSSL_free (name);
+
+	if (!pki_fetch (uri, 0, pki_crl_cb, &crl))
+		return 0;
+
+	show_crl (crl);
+	pki_save_crl (ca, "crls", crl);
+
+	X509_CRL_free (crl);
 	return 0;
 }
 
