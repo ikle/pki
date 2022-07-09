@@ -105,7 +105,6 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 no_glob:
 	free (pattern);
 no_pattern:
-	EVP_PKEY_free (pkey);
 
 	if (path != NULL)
 		*path = pki_crl_path (root, hash);
@@ -114,6 +113,5 @@ no_pattern:
 found:
 	globfree (&g);
 	free (pattern);
-	EVP_PKEY_free (pkey);
 	return crl;
 }
