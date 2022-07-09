@@ -12,6 +12,9 @@
 
 int pki_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 {
+	if (strncmp (uri, "http", 4) == 0)
+		return pki_http_fetch (uri, limit, cb, cookie);
+
 	if (strncmp (uri, "ldap", 4) == 0)
 		return pki_ldap_fetch (uri, limit, cb, cookie);
 
