@@ -5,7 +5,7 @@ LIBNAME	= ikle-pki
 LIBVER	= 0
 LIBREV	= 0.1
 
-DEPENDS = openssl
+DEPENDS = libcurl openssl
 
 LDFLAGS += -llber -lldap
 
