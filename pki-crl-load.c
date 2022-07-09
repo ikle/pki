@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <glob.h>
 #include <unistd.h>
@@ -94,10 +95,8 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 			continue;
 		}
 
-		if (path != NULL) {
-			*path = g.gl_pathv[i];
-			g.gl_pathv[i] = NULL;
-		}
+		if (path != NULL)
+			*path = strdup (g.gl_pathv[i]);
 
 		goto found;
 	}
