@@ -77,7 +77,7 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 	len = snprintf (NULL, 0, "%s/%08lx.r*", root, hash) + 1;
 
 	if ((pattern = malloc (len)) == NULL)
-		goto no_pattern;
+		return NULL;
 
 	snprintf (pattern, len, "%s/%08lx.r*", root, hash);
 
@@ -104,7 +104,6 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 	globfree (&g);
 no_glob:
 	free (pattern);
-no_pattern:
 
 	if (path != NULL)
 		*path = pki_crl_path (root, hash);
