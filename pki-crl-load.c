@@ -63,7 +63,7 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 	char *pattern;
 	glob_t g;
 	size_t i;
-	X509_CRL *ret = NULL, *crl;
+	X509_CRL *crl;
 
 	if ((pkey = X509_get0_pubkey (ca)) == NULL)
 		return NULL;
@@ -99,17 +99,22 @@ X509_CRL *pki_load_crl (const X509 *ca, const char *root, char **path)
 			g.gl_pathv[i] = NULL;
 		}
 
-		ret = crl;
 		goto found;
 	}
 
-	if (path != NULL)
-		*path = pki_crl_path (root, hash);
-found:
 	globfree (&g);
 no_glob:
 	free (pattern);
 no_pattern:
 	EVP_PKEY_free (pkey);
-	return ret;
+
+	if (path != NULL)
+		*path = pki_crl_path (root, hash);
+
+	return NULL;
+found:
+	globfree (&g);
+	free (pattern);
+	EVP_PKEY_free (pkey);
+	return crl;
 }
