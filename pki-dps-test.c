@@ -25,19 +25,18 @@ static void ASN1_TIME_show (const char *prefix, const ASN1_TIME *s, FILE *to)
 	BIO_free (b);
 }
 
-static void show_crl (const X509_CRL *crl)
+static void show_crl (const X509_CRL *crl, FILE *to)
 {
 	X509_NAME *name = X509_CRL_get_issuer (crl);
 	const ASN1_TIME *last = X509_CRL_get0_lastUpdate (crl);
 	const ASN1_TIME *next = X509_CRL_get0_nextUpdate (crl);
 
-	printf ("\tCRL issuer: ");
+	fputs ("\tCRL issuer: ", to);
 	X509_NAME_print_ex_fp (stdout, name, 0, XN_FLAG_RFC2253);
+	fputc ('\n', to);
 
-	printf ("\n");
-
-	ASN1_TIME_show ("\tlast update = ", last, stdout);
-	ASN1_TIME_show ("\tnext update = ", next, stdout);
+	ASN1_TIME_show ("\tlast update = ", last, to);
+	ASN1_TIME_show ("\tnext update = ", next, to);
 }
 
 static int dp_cb (const X509 *ca, const char *uri, void *cookie)
@@ -54,7 +53,7 @@ static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 	if (!pki_fetch (uri, 0, pki_crl_cb, &crl))
 		return 0;
 
-	show_crl (crl);
+	show_crl (crl, stdout);
 	pki_save_crl (ca, "crls", crl);
 
 	X509_CRL_free (crl);
