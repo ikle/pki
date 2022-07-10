@@ -11,7 +11,7 @@
 #include "pki.h"
 #include "pki-fetch.h"
 
-static void ASN1_TIME_show (const char *prefix, const ASN1_TIME *s, FILE *to)
+static void time_show (const char *prefix, const ASN1_TIME *s, FILE *to)
 {
 	BIO *b;
 
@@ -27,11 +27,8 @@ static void ASN1_TIME_show (const char *prefix, const ASN1_TIME *s, FILE *to)
 
 static void show_crl (const X509_CRL *crl, FILE *to)
 {
-	const ASN1_TIME *last = X509_CRL_get0_lastUpdate (crl);
-	const ASN1_TIME *next = X509_CRL_get0_nextUpdate (crl);
-
-	ASN1_TIME_show ("\tlast update = ", last, to);
-	ASN1_TIME_show ("\tnext update = ", next, to);
+	time_show ("\tlast update = ", X509_CRL_get0_lastUpdate (crl), to);
+	time_show ("\tnext update = ", X509_CRL_get0_nextUpdate (crl), to);
 }
 
 static int dp_cb (const X509 *ca, const char *uri, void *cookie)
