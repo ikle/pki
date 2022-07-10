@@ -6,6 +6,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <sys/time.h>
+
 #define LDAP_DEPRECATED  1
 #include <ldap.h>
 
@@ -40,6 +42,7 @@ static int scan_attrs (LDAP *ldap, LDAPMessage *e, pki_data_cb cb, void *cookie)
 int pki_ldap_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 {
 	const int version = LDAP_VERSION3;
+	const struct timeval timeout = { 1, 0 };
 	LDAPURLDesc *desc;
 	LDAP *ldap;
 	LDAPMessage *m, *e;
@@ -58,6 +61,7 @@ int pki_ldap_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 	if ((ldap = ldap_init (desc->lud_host, desc->lud_port)) == NULL)
 		goto no_ldap;
 
+	ldap_set_option (ldap, LDAP_OPT_TIMEOUT, &timeout);
 	ldap_set_option (ldap, LDAP_OPT_PROTOCOL_VERSION, &version);
 
 	ok = ldap_search_ext_s (ldap, desc->lud_dn, desc->lud_scope,
