@@ -36,19 +36,20 @@ static void show_crl (const X509_CRL *crl, FILE *to)
 
 static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 {
+	FILE *to = cookie;
 	X509_NAME *name = X509_get_subject_name (ca);
 	X509_CRL *crl;
 
 	if (name == NULL)
 		return 0;
 
-	X509_NAME_print_ex_fp (stdout, name, 0, XN_FLAG_RFC2253);
-	printf (":\n\t%s\n", uri);
+	X509_NAME_print_ex_fp (to, name, 0, XN_FLAG_RFC2253);
+	fprintf (to, ":\n\t%s\n", uri);
 
 	if (!pki_fetch (uri, 0, pki_crl_cb, &crl))
 		return 0;
 
-	show_crl (crl, stdout);
+	show_crl (crl, to);
 	pki_save_crl (ca, "crls", crl);
 
 	X509_CRL_free (crl);
@@ -57,12 +58,12 @@ static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 
 static int ca_cb (const X509 *ca, void *cookie)
 {
-	pki_scan_dps (ca, dp_cb, NULL);
+	pki_scan_dps (ca, dp_cb, cookie);
 	return 0;
 }
 
 int main (int argc, char *argv[])
 {
-	pki_scan_cas (NULL, ca_cb, NULL);
+	pki_scan_cas (NULL, ca_cb, stdout);
 	return 0;
 }
