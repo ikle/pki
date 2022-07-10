@@ -27,13 +27,8 @@ static void ASN1_TIME_show (const char *prefix, const ASN1_TIME *s, FILE *to)
 
 static void show_crl (const X509_CRL *crl, FILE *to)
 {
-	X509_NAME *name = X509_CRL_get_issuer (crl);
 	const ASN1_TIME *last = X509_CRL_get0_lastUpdate (crl);
 	const ASN1_TIME *next = X509_CRL_get0_nextUpdate (crl);
-
-	fputs ("\tCRL issuer: ", to);
-	X509_NAME_print_ex_fp (stdout, name, 0, XN_FLAG_RFC2253);
-	fputc ('\n', to);
 
 	ASN1_TIME_show ("\tlast update = ", last, to);
 	ASN1_TIME_show ("\tnext update = ", next, to);
