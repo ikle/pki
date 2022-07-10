@@ -6,10 +6,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <stdio.h>
-
-#include <glob.h>
-
 #include <openssl/x509v3.h>
 
 #include "pki.h"
