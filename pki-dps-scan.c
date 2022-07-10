@@ -24,7 +24,7 @@ int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 
 	dps = X509_get_ext_d2i (ca, NID_crl_distribution_points, NULL, NULL);
 	if (dps == NULL)
-		return 1;
+		return 0;
 
 	for (i = 0, dp_count = sk_DIST_POINT_num (dps); i < dp_count; ++i) {
 		dp = sk_DIST_POINT_value (dps, i);
@@ -40,10 +40,13 @@ int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 
 			if (gn->type == GEN_URI &&
 			    cb (ca, (void *) gn->d.ia5->data, cookie))
-				goto out;
+				goto ok;
 		}
 	}
-out:
+
+	CRL_DIST_POINTS_free (dps);
+	return 0;
+ok:
 	CRL_DIST_POINTS_free (dps);
 	return 1;
 }
