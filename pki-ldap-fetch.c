@@ -19,16 +19,19 @@ static int scan_attrs (LDAP *ldap, LDAPMessage *e, pki_data_cb cb, void *cookie)
 	struct berval **vals;
 	size_t i;
 
-	if ((name = ldap_first_attribute (ldap, e, &be)) == NULL)
-		return 0;
+	for (
+		name = ldap_first_attribute (ldap, e, &be);
+		!stop && name != NULL;
+		name = ldap_next_attribute (ldap, e, be)
+	) {
+		vals = ldap_get_values_len (ldap, e, name);
 
-	vals = ldap_get_values_len (ldap, e, name);
+		for (i = 0; !stop && vals[i] != NULL; ++i)
+			stop = cb (vals[i]->bv_val, vals[i]->bv_len, cookie);
 
-	for (i = 0; !stop && vals[i] != NULL; ++i)
-		stop = cb (vals[i]->bv_val, vals[i]->bv_len, cookie);
-
-	ldap_value_free_len (vals);
-	ber_memfree (name);
+		ldap_value_free_len (vals);
+		ber_memfree (name);
+	}
 
 	ber_free (be, 0);
 	return stop;
@@ -46,10 +49,10 @@ int pki_ldap_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 		return 0;
 
 	/*
-	 * URI must point to single attribute
+	 * The URI must contain at least one attribute, and recursive
+	 * lookups are not allowed
 	 */
-	if (desc->lud_scope != LDAP_SCOPE_BASE || desc->lud_attrs == NULL ||
-	    desc->lud_attrs[0] == NULL || desc->lud_attrs[1] != NULL)
+	if (desc->lud_scope != LDAP_SCOPE_BASE || desc->lud_attrs == NULL)
 		goto no_attr;
 
 	if ((ldap = ldap_init (desc->lud_host, desc->lud_port)) == NULL)
