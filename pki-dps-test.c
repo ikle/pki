@@ -46,7 +46,7 @@ static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 	pki_save_crl (ca, "crls", crl);
 
 	X509_CRL_free (crl);
-	return 0;
+	return 1;
 }
 
 static int ca_cb (const X509 *ca, void *cookie)

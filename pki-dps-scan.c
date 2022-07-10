@@ -40,10 +40,10 @@ int pki_scan_dps (const X509 *ca, pki_dp_cb cb, void *cookie)
 
 			if (gn->type == GEN_URI &&
 			    cb (ca, (void *) gn->d.ia5->data, cookie))
-				break;
+				goto out;
 		}
 	}
-
+out:
 	CRL_DIST_POINTS_free (dps);
 	return 1;
 }
