@@ -25,12 +25,6 @@ static void time_show (const char *prefix, const ASN1_TIME *s, FILE *to)
 	BIO_free (b);
 }
 
-static void show_crl (const X509_CRL *crl, FILE *to)
-{
-	time_show ("\tlast update = ", X509_CRL_get0_lastUpdate (crl), to);
-	time_show ("\tnext update = ", X509_CRL_get0_nextUpdate (crl), to);
-}
-
 static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 {
 	FILE *to = cookie;
@@ -46,7 +40,9 @@ static int dp_cb (const X509 *ca, const char *uri, void *cookie)
 	if (!pki_fetch (uri, 0, pki_crl_cb, &crl))
 		return 0;
 
-	show_crl (crl, to);
+	time_show ("\tlast update = ", X509_CRL_get0_lastUpdate (crl), to);
+	time_show ("\tnext update = ", X509_CRL_get0_nextUpdate (crl), to);
+
 	pki_save_crl (ca, "crls", crl);
 
 	X509_CRL_free (crl);
