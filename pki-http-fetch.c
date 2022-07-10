@@ -48,6 +48,9 @@ int pki_http_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 	    curl_easy_setopt (c, CURLOPT_WRITEDATA, &o) != 0)
 		goto no_opt;
 
+	if (limit != 0)
+		curl_easy_setopt (c, CURLOPT_MAXFILESIZE, limit);
+
 	curl_easy_setopt (c, CURLOPT_TIMEOUT, 1);
 	curl_easy_setopt (c, CURLOPT_FOLLOWLOCATION, 1);
 
