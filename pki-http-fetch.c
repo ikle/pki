@@ -49,10 +49,10 @@ int pki_http_fetch (const char *uri, int limit, pki_data_cb cb, void *cookie)
 		goto no_opt;
 
 	if (limit != 0)
-		curl_easy_setopt (c, CURLOPT_MAXFILESIZE, limit);
+		curl_easy_setopt (c, CURLOPT_MAXFILESIZE, (long) limit);
 
-	curl_easy_setopt (c, CURLOPT_TIMEOUT, 1);
-	curl_easy_setopt (c, CURLOPT_FOLLOWLOCATION, 1);
+	curl_easy_setopt (c, CURLOPT_TIMEOUT, 1L);
+	curl_easy_setopt (c, CURLOPT_FOLLOWLOCATION, 1L);
 
 	if (curl_easy_perform (c) == 0)
 		ok = cb (o.data, o.len, cookie);
